@@ -9,3 +9,18 @@ document.getElementById("message-form").addEventListener("submit", (e) => {
 socket.on("message", (msg) => {
 	console.log(msg);
 });
+
+document.querySelector("#send-location").addEventListener("click", () => {
+	if (!navigator.geolocation) {
+		//no support for this in the browser
+		return alert("Geolocation is not supported by your browser!");
+	}
+
+	navigator.geolocation.getCurrentPosition((position) => {
+		console.log(position);
+		const lat = position.coords.latitude;
+		const long = position.coords.longitude;
+		const location = { lat, long };
+		socket.emit("sendLocation", location);
+	});
+});

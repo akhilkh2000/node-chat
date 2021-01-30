@@ -24,6 +24,10 @@ io.on("connection", (socket) => {
 	//emits to all connected clients except the one who just joined
 	socket.broadcast.emit("message", "A new user has joined!");
 
+	socket.on("sendLocation", (location) => {
+		const locationUrl = `https://www.google.com/maps?q=${location.lat},${location.long}`;
+		socket.broadcast.emit("message", locationUrl);
+	});
 	socket.on("disconnect", () => {
 		io.emit("message", "A user has left the chat!");
 	});
