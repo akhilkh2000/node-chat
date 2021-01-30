@@ -11,17 +11,21 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
-
 io.on("connection", (socket) => {
 	//socket object contains info about the socket created by that client on the server
-	
+
 	console.log("New web socket connection");
 
 	socket.emit("message", "Welcome!");
-
-
 	socket.on("sendMessage", (message) => {
 		io.emit("message", message);
+	});
+
+	//emits to all connected clients except the one who just joined
+	socket.broadcast.emit("message", "A new user has joined!");
+
+	socket.on("disconnect", () => {
+		io.emit("message", "A user has left the chat!");
 	});
 });
 
