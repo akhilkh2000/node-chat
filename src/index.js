@@ -11,17 +11,17 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
-let count = 0;
+
 io.on("connection", (socket) => {
 	//socket object contains info about the socket created by that client on the server
-	socket.emit("countUpdated", count); //send count
+	
 	console.log("New web socket connection");
 
-	socket.on("increment", () => {
-		count++;
-		//socket.emit only emits the event to that particular socket , not all the clients connected to that socket
-		//socket.emit("countUpdated", count);
-		io.emit("countUpdated", count);
+	socket.emit("message", "Welcome!");
+
+
+	socket.on("sendMessage", (message) => {
+		io.emit("message", message);
 	});
 });
 
