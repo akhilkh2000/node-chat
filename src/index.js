@@ -17,16 +17,19 @@ io.on("connection", (socket) => {
 	console.log("New web socket connection");
 
 	socket.emit("message", "Welcome!");
-	socket.on("sendMessage", (message) => {
+
+	socket.on("sendMessage", (message, callback) => {
 		io.emit("message", message);
+		callback("delivered!"); //send ACK
 	});
 
 	//emits to all connected clients except the one who just joined
 	socket.broadcast.emit("message", "A new user has joined!");
 
-	socket.on("sendLocation", (location) => {
+	socket.on("sendLocation", (location, callback) => {
 		const locationUrl = `https://www.google.com/maps?q=${location.lat},${location.long}`;
 		socket.broadcast.emit("message", locationUrl);
+		callback("location-shared!");
 	});
 	socket.on("disconnect", () => {
 		io.emit("message", "A user has left the chat!");

@@ -1,10 +1,18 @@
-const socket = io();
+const socket = io(); //connect to socket
+
+//event acknowledgments
+//server(emit) -> client(recieve) -- ACK -> server
+// client(emit) -> server(recieve) -- ACK -> client
 
 document.getElementById("message-form").addEventListener("submit", (e) => {
 	e.preventDefault(); //to prevent default refresh
 	const message = e.target.elements.message.value;
 	// console.log(message);
-	socket.emit("sendMessage", message);
+	//sends a callback function so that the server can call in to ack the client
+	socket.emit("sendMessage", message, (msgFromserver) => {
+		//event ACK
+		console.log("message from server - " + msgFromserver);
+	});
 });
 socket.on("message", (msg) => {
 	console.log(msg);
@@ -21,6 +29,8 @@ document.querySelector("#send-location").addEventListener("click", () => {
 		const lat = position.coords.latitude;
 		const long = position.coords.longitude;
 		const location = { lat, long };
-		socket.emit("sendLocation", location);
+		socket.emit("sendLocation", location, (msgFromserver) => {
+			console.log("message from server -", msgFromserver);
+		});
 	});
 });
