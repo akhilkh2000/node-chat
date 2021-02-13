@@ -8,7 +8,19 @@ const $messageForm = document.querySelector("#message-form");
 const $messageFormInput = $messageForm.querySelector("input");
 const $messageFormButtom = $messageForm.querySelector("button");
 const $locationButton = document.querySelector("#send-location");
+const $messages = document.querySelector("#messages");
+
+//templates
+const messageTemplate = document.querySelector("#message-template").innerHTML;
+
+// event on every new message from anyone
 socket.on("message", (msg) => {
+	//render when a new message comes in
+	const html = Mustache.render(messageTemplate, {
+		message: msg,
+	});
+	//insert into div for messages
+	$messages.insertAdjacentHTML("beforeend", html);
 	console.log(msg);
 });
 $messageForm.addEventListener("submit", (e) => {
