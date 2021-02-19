@@ -19,7 +19,8 @@ const locationMessageTemplate = document.querySelector(
 socket.on("message", (msg) => {
 	//render when a new message comes in
 	const html = Mustache.render(messageTemplate, {
-		message: msg,
+		message: msg.text,
+		createdAt: moment(msg.createdAt).format("HH:mm"),
 	});
 	//insert into div for messages
 	$messages.insertAdjacentHTML("beforeend", html);

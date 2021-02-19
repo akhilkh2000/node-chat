@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = socketio(server); //create socketio server ( needs an http server as param)
 const port = process.env.PORT || 3000;
 const publicDirectoryPath = path.join(__dirname, "../public");
-
+const { generateMessage } = require("./utils/messages");
 //include public assets
 app.use(express.static(publicDirectoryPath));
 
@@ -17,16 +17,16 @@ io.on("connection", (socket) => {
 
 	console.log("New web socket connection");
 
-	socket.emit("message", "Welcome!");
+	socket.emit("message", generateMessage("Welcome!"));
 
 	//when send is clicked
 	socket.on("sendMessage", (message, callback) => {
-		io.emit("message", message);
+		io.emit("message", generateMessage(message));
 		callback("delivered!"); //send ACK
 	});
 
 	//emits to all connected clients except the one who just joined
-	socket.broadcast.emit("message", "A new user has joined!");
+	socket.broadcast.emit("message", generateMessage("A new user has joined!"));
 
 	socket.on("sendLocation", (location, callback) => {
 		const locationUrl = `https://www.google.com/maps?q=${location.lat},${location.long}`;
@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
 		callback("location-shared!");
 	});
 	socket.on("disconnect", () => {
-		io.emit("message", "A user has left the chat!");
+		io.emit("message", generateMessage("A user has left the chat!"));
 	});
 });
 
