@@ -12,7 +12,9 @@ const $messages = document.querySelector("#messages");
 
 //templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
-
+const locationMessageTemplate = document.querySelector(
+	"#location-message-template"
+).innerHTML;
 // event on every new message from anyone
 socket.on("message", (msg) => {
 	//render when a new message comes in
@@ -22,6 +24,15 @@ socket.on("message", (msg) => {
 	//insert into div for messages
 	$messages.insertAdjacentHTML("beforeend", html);
 	console.log(msg);
+});
+
+socket.on("locationMessage", (mapsUrl) => {
+	console.log(mapsUrl);
+
+	const html = Mustache.render(locationMessageTemplate, {
+		url: mapsUrl,
+	});
+	$messages.insertAdjacentHTML("beforeend", html);
 });
 $messageForm.addEventListener("submit", (e) => {
 	e.preventDefault(); //to prevent default refresh

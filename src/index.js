@@ -9,6 +9,7 @@ const io = socketio(server); //create socketio server ( needs an http server as 
 const port = process.env.PORT || 3000;
 const publicDirectoryPath = path.join(__dirname, "../public");
 
+//include public assets
 app.use(express.static(publicDirectoryPath));
 
 io.on("connection", (socket) => {
@@ -18,6 +19,7 @@ io.on("connection", (socket) => {
 
 	socket.emit("message", "Welcome!");
 
+	//when send is clicked
 	socket.on("sendMessage", (message, callback) => {
 		io.emit("message", message);
 		callback("delivered!"); //send ACK
@@ -28,7 +30,7 @@ io.on("connection", (socket) => {
 
 	socket.on("sendLocation", (location, callback) => {
 		const locationUrl = `https://www.google.com/maps?q=${location.lat},${location.long}`;
-		socket.broadcast.emit("message", locationUrl);
+		io.emit("locationMessage", locationUrl);
 		callback("location-shared!");
 	});
 	socket.on("disconnect", () => {
