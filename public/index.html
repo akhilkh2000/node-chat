@@ -3,29 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
+    <title>Chat App</title>
+
+    <link rel="icon" href="./img/favicon.png">
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-    Chat app
+    <div class="chat">
+        <div class="chat__sidebar">
+            <!-- TODO -->
+        </div>
+        <div class="chat__main">
+            <div id="messages" class="chat__messages"></div>
 
-    <div id="messages"></div>
-    <form action="" id="message-form">
-        <input type="text" name="message" id="message" placeholder="Message">
-        <button>Send</button>
-    </form>
-    <button id="send-location">Send Location</button>
+            <div class="compose">
+                <form action="" id="message-form">
+                    <input type="text" name="message" id="message" placeholder="Message">
+                    <button>Send</button>
+                </form>
+                <button id="send-location">Send Location</button>
+            </div>
+            
+        </div>
+
+    </div>
     <!-- <button id="increment">IncrementCount</button> -->
 
     <!-- template for message -->
     <script id="message-template" type="text/html">
-        <div>
-            <p> {{createdAt}} - {{message}} </p>
+        <div class="message">
+            <p>
+                <span class = "message__name">Username</span>
+                <span class = "message__meta">{{createdAt}}</span>
+            </p>
+            <p>{{message}} </p>
         </div>
     </script>
     <!-- script for location message -->
     <script id="location-message-template" type="text/html">
-        <div>
-            <p>{{createdAt}} - <a href="{{url}}" target="_blank"> My current location</a> </p>
+        <div class = "message">
+            <p>
+                <span class = "message__name">Username</span>
+                <span class = "message__meta">{{createdAt}}</span>
+            </p>
+            <p><a href="{{url}}" target="_blank"> My current location</a> </p>
         </div>
     </script>
 
