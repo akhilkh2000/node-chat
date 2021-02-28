@@ -4,6 +4,7 @@ const socket = io(); //connect to socket
 //server(emit) -> client(recieve) -- ACK -> server
 // client(emit) -> server(recieve) -- ACK -> client
 
+//elements
 const $messageForm = document.querySelector("#message-form");
 const $messageFormInput = $messageForm.querySelector("input");
 const $messageFormButtom = $messageForm.querySelector("button");
@@ -15,6 +16,13 @@ const messageTemplate = document.querySelector("#message-template").innerHTML;
 const locationMessageTemplate = document.querySelector(
 	"#location-message-template"
 ).innerHTML;
+
+//Options
+//to parse the query string from URL
+const { username, room } = Qs.parse(location.search, {
+	ignoreQueryPrefix: true,
+});
+
 // event on every new message from anyone
 socket.on("message", (msg) => {
 	//render when a new message comes in
@@ -74,3 +82,6 @@ $locationButton.addEventListener("click", () => {
 		});
 	});
 });
+
+//when user wants to join room
+socket.emit("join", { username, room });

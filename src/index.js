@@ -20,16 +20,22 @@ io.on("connection", (socket) => {
 
 	console.log("New web socket connection");
 
-	socket.emit("message", generateMessage("Welcome!"));
+	//event when user joins room
+	socket.on("join", ({ username, room }) => {
+		socket.join(room);
+		//welcome message
+		socket.emit("message", generateMessage("Welcome!"));
+		//emits to all connected clients except the one who just joined(in the current room)
+		socket.broadcast
+			.to(room)
+			.emit("message", generateMessage(`${username} has joined!`));
+	});
 
 	//when send is clicked
 	socket.on("sendMessage", (message, callback) => {
 		io.emit("message", generateMessage(message));
 		callback("delivered!"); //send ACK
 	});
-
-	//emits to all connected clients except the one who just joined
-	socket.broadcast.emit("message", generateMessage("A new user has joined!"));
 
 	//SEND LOCATION
 	socket.on("sendLocation", (location, callback) => {
