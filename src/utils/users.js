@@ -29,6 +29,7 @@ const addUser = ({ id, username, room }) => {
 	users.push(user);
 	return { user };
 };
+
 // REMOVE USER
 const removeUser = (id) => {
 	const indexOfUser = users.findIndex((user) => {
@@ -41,16 +42,24 @@ const removeUser = (id) => {
 	}
 };
 
-/* addUser({
-	id: 22,
-	username: "akhil",
-	room: "abc",
-});
+//GET USER
+const getUser = (id) => {
+	return users.find((user) => {
+		return user.id === id;
+	});
+};
 
-console.log(users);
+//GET USERS IN ROOM
+const getUsersInRoom = (room) => {
+	//filter
+	return users.filter((user) => {
+		return user.room === room;
+	});
+};
 
-removeUser(22);
-
-console.log(users);
-
-// console.log(users); */
+module.exports = {
+	addUser,
+	removeUser,
+	getUser,
+	getUsersInRoom,
+};
