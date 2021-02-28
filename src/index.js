@@ -2,6 +2,13 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
+const {
+	addUser,
+	removeUser,
+	getUser,
+	getUsersInRoom,
+} = require("./utils/users");
+
 const app = express();
 //refactoring done to create server in diff way to incorporate socket.io
 const server = http.createServer(app);
@@ -18,17 +25,24 @@ app.use(express.static(publicDirectoryPath));
 io.on("connection", (socket) => {
 	//socket object contains info about the socket created by that client on the server
 
-	console.log("New web socket connection");
-
 	//event when user joins room
-	socket.on("join", ({ username, room }) => {
-		socket.join(room);
+	socket.on("join", ({ username, room }, callback) => {
+		const { error, user } = addUser({ id: socket.id, username, room });
+
+		if (error) {
+			callback(error);
+			return;
+		}
+
+		socket.join(user.room);
 		//welcome message
 		socket.emit("message", generateMessage("Welcome!"));
 		//emits to all connected clients except the one who just joined(in the current room)
 		socket.broadcast
-			.to(room)
-			.emit("message", generateMessage(`${username} has joined!`));
+			.to(user.room)
+			.emit("message", generateMessage(`${user.username} has joined!`));
+
+		callback();
 	});
 
 	//when send is clicked
@@ -46,7 +60,13 @@ io.on("connection", (socket) => {
 
 	//DISCONNECT
 	socket.on("disconnect", () => {
-		io.emit("message", generateMessage("A user has left the chat!"));
+		const user = removeUser(socket.id);
+		if (user) {
+			io.to(user.room).emit(
+				"message",
+				generateMessage(`${user.username} has left!`)
+			);
+		}
 	});
 });
 

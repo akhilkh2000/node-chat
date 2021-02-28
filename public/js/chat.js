@@ -84,4 +84,9 @@ $locationButton.addEventListener("click", () => {
 });
 
 //when user wants to join room
-socket.emit("join", { username, room });
+socket.emit("join", { username, room }, (err) => {
+	if (err) {
+		alert(err);
+		location.href = "/";
+	}
+});
