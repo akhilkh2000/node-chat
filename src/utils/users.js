@@ -38,7 +38,7 @@ const removeUser = (id) => {
 
 	if (indexOfUser !== -1) {
 		//splice returns an array of all elements removed so we removed only one user so we use indexing to get the first obj
-		return users.splice(indexOfUser, 1)[0];
+		return users.splice(indexOfUser, 1)[0]; //TODO
 	}
 };
 

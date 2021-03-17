@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
 		const { error, user } = addUser({ id: socket.id, username, room });
 
 		if (error) {
-			callback(error);
+			callback(error); // TO REDIRECT USER
 			return;
 		}
 
@@ -41,20 +41,29 @@ io.on("connection", (socket) => {
 		socket.broadcast
 			.to(user.room)
 			.emit("message", generateMessage(`${user.username} has joined!`));
-
-		callback();
+		io.to(user.room).emit("roomChanged", {
+			room: user.room,
+			users: getUsersInRoom(user.room),
+		});
+		callback(); // CALL IT WITHOUT ERROR FOR NORMAL
 	});
 
 	//when send is clicked
 	socket.on("sendMessage", (message, callback) => {
-		io.emit("message", generateMessage(message));
+		const user = getUser(socket.id); //GET USER WHO SENT MESSAGE
+
+		io.to(user.room).emit("message", generateMessage(user.username, message));
 		callback("delivered!"); //send ACK
 	});
 
 	//SEND LOCATION
 	socket.on("sendLocation", (location, callback) => {
+		const user = getUser(socket.id);
 		const locationUrl = `https://www.google.com/maps?q=${location.lat},${location.long}`;
-		io.emit("locationMessage", generateLocationMessage(locationUrl));
+		io.to(user.room).emit(
+			"locationMessage",
+			generateLocationMessage(user.username, locationUrl)
+		);
 		callback("location-shared!");
 	});
 
@@ -66,6 +75,10 @@ io.on("connection", (socket) => {
 				"message",
 				generateMessage(`${user.username} has left!`)
 			);
+			io.to(user.room).emit("roomChanged", {
+				room: user.room,
+				users: getUsersInRoom(user.room),
+			});
 		}
 	});
 });
